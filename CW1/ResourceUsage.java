@@ -61,14 +61,54 @@ public class ResourceUsage{
 	
 			}
 			
-			System.out.println("Physical Hosts with resource usage:");
-			System.out.println("HOSTID\tCPU Usage\tMem Usage\tDisk Usage\tVMs");
+			// System.out.println("Physical Hosts with resource usage:");
+			// System.out.println("HOSTID\tCPU Usage\tMem Usage\tDisk Usage\tVMs");
+			double[] host1 = new double[5];
+			double[] host2 = new double[5];
+			double[] host3 = new double[5];
+			double[] host4 = new double[5];
+
 			for(HOSTPERF h: arrHost)
 			{
-				System.out.println(h.HOSTID + "\t" + df2.format(h.HostCpuUsage) +"\t\t" + df2.format(h.HostMemUsage) + "\t\t" + h.HostDiskUsage + "\t\t" + h.NumVM);
-			}
-			System.out.println();
+				switch(h.HOSTID){
+					case 6:
+						host1 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+					case 7:
+						host2 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+					case 9:
+						host3 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+					case 21:
+						host4 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+				}
 			
+				//System.out.println(h.HOSTID + "\t" + df2.format(h.HostCpuUsage) +"\t\t" + df2.format(h.HostMemUsage) + "\t\t" + h.HostDiskUsage + "\t\t" + h.NumVM);
+				//System.out.println(arrHost + "\t");
+			}
+			double a = getSum(host1);
+			double b = getSum(host2);
+			double c = getSum(host3);
+			double d = getSum(host4);
+			double[] finall = new double[] {a, b, c, d};
+			for(int i = 0; i < finall.length; i++){
+				System.out.println(finall[i]);
+			}
+			int id = 0;
+			switch(findBest(finall)){
+				case 0:
+					id = (int)host1[0];
+					break;
+				case 1:
+					id = (int)host2[0];
+					break;
+				case 2:
+					id = (int)host3[0];
+					break;
+				case 3:
+					id = (int)host4[0];
+					break;
+					
+			}
+			System.out.println(id);
 			// vmAllocation(oneClient, arrHostHigh, arrHostMed, arrHostLow);
 			// arrHost.sort(Comparator.comparingDouble(HOSTPERF::getCpuUsage));
 		}catch(Exception e){
@@ -76,7 +116,26 @@ public class ResourceUsage{
 			e.printStackTrace();
 		}
 	}
+	public static double getSum(double[] a){
+		double sum = 0;
 	
+		sum = a[1] + a[2] + a[3] + (a[4] * 0.5);
+		return sum;
+	}
+	public static int findBest(double[] a){
+		double min = 1000.0;
+		int result = 0;
+		
+		for(int i = 0; i < a.length; i++){
+			if(a[i] < min){
+				min = a[i];
+				result = i;
+				System.out.println(min + "\t" + i);
+			}
+		}
+
+		return result;
+	}
 		
 	/*class of HOST*/
 	public class HOSTPERF 

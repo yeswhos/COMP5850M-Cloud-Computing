@@ -12,11 +12,148 @@ import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.*;
 import org.opennebula.client.host.*;
 import java.util.concurrent.*;
+import java.util.*;
 
 public class VMachineSample{
+    private OneResponse rc; 
+    static int hostId;
     public static String getType(Object object){
         return object.getClass().toString();
     }
+
+    //get and extract information from all the avaliable host 
+    public void retrieveInformation(Client oneClient)
+	{
+		
+        ArrayList <HOSTPERF> arrHost = new ArrayList<HOSTPERF>();
+        try{
+            HostPool pool = new HostPool( oneClient );
+            pool.info();
+            double cpuUsage, memUsage, diskUsage;
+            for( Host host: pool)
+            {
+                rc = host.info();
+                cpuUsage = (Double.parseDouble(host.xpath("/HOST/HOST_SHARE/CPU_USAGE"))/Double.parseDouble(host.xpath("/HOST/HOST_SHARE/MAX_CPU")))*100;
+                memUsage = (Double.parseDouble(host.xpath("/HOST/HOST_SHARE/MEM_USAGE"))/Double.parseDouble(host.xpath("/HOST/HOST_SHARE/MAX_MEM")))*100;
+                diskUsage = (Double.parseDouble(host.xpath("/HOST/HOST_SHARE/DISK_USAGE"))/Double.parseDouble(host.xpath("/HOST/HOST_SHARE/MAX_DISK")))*100;
+                
+                int numVM = Integer.parseInt(host.xpath("/HOST/HOST_SHARE/RUNNING_VMS"));
+                
+                arrHost.add(new HOSTPERF(Integer.parseInt(host.xpath("/HOST/ID")), (host.xpath("/HOST/NAME")).toString(), cpuUsage, memUsage, diskUsage, numVM));
+
+            }
+
+            double[] host1 = new double[5];
+            double[] host2 = new double[5];
+            double[] host3 = new double[5];
+            double[] host4 = new double[5];
+
+            for(HOSTPERF h: arrHost)
+            {
+                switch(h.HOSTID){
+                    case 6:
+                        host1 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 7:
+                        host2 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 9:
+                        host3 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 21:
+                        host4 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                }
+            
+            }
+            double a = getSum(host1);
+            double b = getSum(host2);
+            double c = getSum(host3);
+            double d = getSum(host4);
+            double[] finall = new double[] {a, b, c, d};
+            // for(int i = 0; i < finall.length; i++){
+            //     System.out.println(finall[i]);
+            // }
+            int id = 0;
+            switch(findBest(finall)){
+                case 0:
+                    id = (int)host1[0];
+                    break;
+                case 1:
+                    id = (int)host2[0];
+                    break;
+                case 2:
+                    id = (int)host3[0];
+                    break;
+                case 3:
+                    id = (int)host4[0];
+                    break;
+                    
+            }
+            hostId = id;
+            //System.out.println(id);
+
+		}catch(Exception e){
+			System.out.println("Error viewing all of the Host info");
+			e.printStackTrace();
+		}
+	}
+	public static double getSum(double[] a){
+		double sum = 0;
+	
+		sum = a[1] + a[2] + a[3] + (a[4] * 0.5);
+		return sum;
+	}
+	public static int findBest(double[] a){
+		double min = 1000.0;
+		int result = 0;
+		
+		for(int i = 0; i < a.length; i++){
+			if(a[i] < min){
+				min = a[i];
+				result = i;
+				System.out.println(min + "\t" + i);
+			}
+		}
+
+		return result;
+	}
+		
+	/*class of HOST*/
+	public class HOSTPERF 
+	{
+		int HOSTID;
+		String HOSTNAME;
+		double HostCpuUsage;
+		double HostMemUsage;
+		double HostDiskUsage;
+		int NumVM;
+		
+		public HOSTPERF(int _hostID, String _hostName, double _cpuUsage, double _memUsage, double _diskUsage, int _numVM)
+		{
+			HOSTID = _hostID;
+			HOSTNAME = _hostName;
+			HostCpuUsage = _cpuUsage;
+			HostMemUsage = _memUsage;
+			HostDiskUsage = _diskUsage;
+			NumVM = _numVM;
+		}
+		
+		public int getID(){
+			return HOSTID;
+		}
+		public String getName(){
+			return HOSTNAME;
+		}
+		public double getCpuUsage(){
+			return HostCpuUsage;
+		}
+		public double getMemUsage(){
+			return HostMemUsage;
+		}
+		public double getDiskUsage(){
+			return HostDiskUsage;
+		}
+		public int getNumVM(){
+			return NumVM;
+		}
+	}
 
     public static void main(String[] args)
     {
@@ -29,6 +166,7 @@ public class VMachineSample{
         String username = System.getProperty("user.name");
         System.out.println(username);
         passwd = "Vivalavida0902";
+        
         //passwd = new String(System.console().readPassword("[%s]", "Password:"));
 
         // First of all, a Client object has to be created.
@@ -41,6 +179,8 @@ public class VMachineSample{
             // We will try to create a new virtual machine. The first thing we
             // need is an OpenNebula virtual machine template.
             VMachineSample VMsample = new VMachineSample();
+            
+            
             //Client oneClient = VMsample.logIntoCloud();
 
             // This VM template is a valid one, but it will probably fail to run
@@ -100,21 +240,42 @@ public class VMachineSample{
             long timeEscape1 = endTime - startTime;
             System.out.println("Time for instantiation" + timeEscape1 + "ms");
         
-            //System.out.println("现在的" + vm2.info().getMessage());
 
-            //新加的
-            // Host host = new Host(6, oneClient);
-            // vm.migrate(6);
-            
+            //新加的第二个问题
+            VMsample.retrieveInformation(oneClient);
+            System.out.println(hostId);
+            System.out.println("Start to migrate vm...");
+            long startTimeMigrate = System.currentTimeMillis();
+            vm.liveMigrate(hostId);
+            if(rc.isError())
+            {
+                System.out.println("failed!");
+                throw new Exception( rc.getErrorMessage() );
+            }
+            else
+                System.out.println("migrate ok.");
+            System.out.println("Wait till it run again");
+            while(true){
+                rc = vm.info();
+                String info = vm.status();
+                if(info == "runn"){
+                    break;
+                }
+            }
+            long endTimeMigrate = System.currentTimeMillis();
+            long timeEscape2 = endTimeMigrate - startTimeMigrate;
+            System.out.println("Time for migration" + "\t" + timeEscape2 + "ms");
+            System.out.println("ok, check host info");
+            Host host = new Host(hostId, oneClient);
             // HostPool hostPool = new HostPool(oneClient);    
-            // String hostInfo = host.info().getMessage();
+            String hostInfo = host.info().getMessage();
             // //String type = getType(host.info().getMessage());
             // //System.out.println(hostInfo);
-            // String result = hostInfo;
+            String result = hostInfo;
             // String hostPoolInfo = hostPool.info().getMessage();
             // //System.out.print(hostPoolInfo);
-            // result = result.replace("</", "\n");
-            // System.out.print(result);
+            //result = result.replace("</", "\n");
+            System.out.print(hostInfo);
 
             // Let's hold the VM, so the scheduler won't try to deploy it
             System.out.print("Trying to hold the new VM... ");
