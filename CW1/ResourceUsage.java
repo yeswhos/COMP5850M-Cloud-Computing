@@ -63,52 +63,88 @@ public class ResourceUsage{
 			
 			// System.out.println("Physical Hosts with resource usage:");
 			// System.out.println("HOSTID\tCPU Usage\tMem Usage\tDisk Usage\tVMs");
-			double[] host1 = new double[5];
-			double[] host2 = new double[5];
-			double[] host3 = new double[5];
-			double[] host4 = new double[5];
+            double[] host1 = new double[5];
+            double[] host2 = new double[5];
+            double[] host3 = new double[5];
+            double[] host4 = new double[5];
+
+            double[] host5 = new double[5];
+            double[] host6 = new double[5];
+            double[] host7 = new double[5];
+            double[] host8 = new double[5];
+            double[] host9 = new double[5];
 
 			for(HOSTPERF h: arrHost)
 			{
 				switch(h.HOSTID){
 					case 6:
-						host1 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
-					case 7:
-						host2 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
-					case 9:
-						host3 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
-					case 21:
-						host4 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                        host1 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 7:
+                        host2 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 9:
+                        host3 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 21:
+                        host4 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 20:
+                        host5 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 19:
+                        host6 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 11:
+                        host7 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 10:
+                        host8 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
+                    case 1:
+                        host9 = new double[]{h.HOSTID, h.HostCpuUsage, h.HostMemUsage, h.HostDiskUsage, h.NumVM};
 				}
 			
 				//System.out.println(h.HOSTID + "\t" + df2.format(h.HostCpuUsage) +"\t\t" + df2.format(h.HostMemUsage) + "\t\t" + h.HostDiskUsage + "\t\t" + h.NumVM);
 				//System.out.println(arrHost + "\t");
 			}
 			double a = getSum(host1);
-			double b = getSum(host2);
-			double c = getSum(host3);
-			double d = getSum(host4);
-			double[] finall = new double[] {a, b, c, d};
+            double b = getSum(host2);
+            double c = getSum(host3);
+            double d = getSum(host4);
+            double e = getSum(host5);
+            double f = getSum(host6);
+            double g = getSum(host7);
+            double h = getSum(host8);
+            double j = getSum(host9);
+            double[] finall = new double[] {a, b, c, d, e, f, g, h, j};
 			for(int i = 0; i < finall.length; i++){
 				System.out.println(finall[i]);
 			}
 			int id = 0;
 			switch(findBest(finall)){
 				case 0:
-					id = (int)host1[0];
-					break;
-				case 1:
-					id = (int)host2[0];
-					break;
-				case 2:
-					id = (int)host3[0];
-					break;
-				case 3:
-					id = (int)host4[0];
-					break;
+				id = (int)host1[0];
+				break;
+			case 1:
+				id = (int)host2[0];
+				break;
+			case 2:
+				id = (int)host3[0];
+				break;
+			case 3:
+				id = (int)host4[0];
+				break;
+			case 4:
+				id = (int)host5[0];
+				break;
+			case 5:
+				id = (int)host6[0];
+				break;
+			case 6:
+				id = (int)host7[0];
+				break;
+			case 7:
+				id = (int)host8[0];
+				break;
+			case 8:
+				id = (int)host9[0];
+				break;
 					
 			}
-			System.out.println(id);
+			System.out.println("I'm gonna migrate VM to " + id);
 			// vmAllocation(oneClient, arrHostHigh, arrHostMed, arrHostLow);
 			// arrHost.sort(Comparator.comparingDouble(HOSTPERF::getCpuUsage));
 		}catch(Exception e){
