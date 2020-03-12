@@ -1,12 +1,3 @@
-/*******************************************************************************
- * VM Example class - Coursework 1
- *
- * @author Karim Djemame
- * @version 1.0 [2020-02-21]
- *
- *******************************************************************************/
-
-
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.*;
@@ -276,8 +267,8 @@ public class CWPart2{
 
             //新加的第二个问题
             VMsample.retrieveInformation(oneClient);
-  
-            System.out.println(hostId);
+            System.out.println("I'm gonna migrate VM to" + hostId);
+            
             System.out.println("Start to migrate vm...");
             long startTimeMigrate = System.currentTimeMillis();
             vm.liveMigrate(hostId);
